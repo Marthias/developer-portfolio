@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+// using native <img> to avoid next/image runtime issues
 import { getPublicProjectBySlug } from "@/lib/data/projects";
 
 type ProjectPageProps = {

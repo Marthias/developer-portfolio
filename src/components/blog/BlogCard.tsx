@@ -17,6 +17,8 @@ function formatDate(date: string) {
   }).format(new Date(date));
 }
 
+import Link from "next/link";
+
 export default function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="overflow-hidden rounded-xl border">
@@ -45,12 +47,12 @@ export default function BlogCard({ post }: BlogCardProps) {
           </p>
         )}
 
-        <a
+        <Link
           href={`/blog/${post.slug}`}
           className="mt-5 inline-block rounded-lg border px-4 py-2 text-sm font-medium"
         >
           Read Article
-        </a>
+        </Link>
       </div>
     </article>
   );

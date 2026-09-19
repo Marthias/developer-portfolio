@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getPublishedBlogPostBySlug } from "@/lib/data/blog";
 
 type BlogPostPageProps = {
@@ -73,12 +74,12 @@ export default async function BlogPostPage({
 
         {/* Back to Blog */}
         <div className="mt-12">
-          <a
+          <Link
             href="/blog"
             className="inline-block rounded-lg border px-5 py-3 text-sm font-medium"
           >
             ← Back to Blog
-          </a>
+          </Link>
         </div>
 
       </article>
