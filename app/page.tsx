@@ -1,4 +1,5 @@
-import ProjectsSection from "../src/components/projects/ProjectsSection";
+import ProjectsSection from "./projects/ProjectsSection";
+import SkillsSection from "@/components/skills/SkillsSection";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       </section>
 
       <ProjectsSection />
+      <SkillsSection />
     </main>
   );
 }
