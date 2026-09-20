@@ -97,3 +97,61 @@ export async function getPublicProjectBySlug(slug: string) {
 
   return data;
 }
+
+export async function getAdminProjects() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      title,
+      slug,
+      short_description,
+      status,
+      featured,
+      created_at,
+      updated_at
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch admin projects: ${error.message}`
+    );
+  }
+
+  return data;
+}
+
+export async function getAdminProjectById(id: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select(`
+      id,
+      title,
+      slug,
+      short_description,
+      description,
+      github_url,
+      live_url,
+      status,
+      featured
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return null;
+    }
+
+    throw new Error(
+      `Failed to fetch admin project: ${error.message}`
+    );
+  }
+
+  return data;
+}
