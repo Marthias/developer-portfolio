@@ -1,32 +1,44 @@
-import {
-  createClient as createSupabaseClient,
-  SupabaseClient,
-} from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 
-const DEFAULT_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const DEFAULT_SUPABASE_KEY =
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabasePublishableKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-function ensureEnv(url?: string, key?: string) {
-  if (!url) throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
-  if (!key) throw new Error("Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
+if (!supabaseUrl) {
+  throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
 }
 
-/**
- * Create a Supabase client.
- * If `url` and `key` are omitted, the function falls back to NEXT_PUBLIC_* env vars.
- */
-export function createClient(
-  url: string | undefined = DEFAULT_SUPABASE_URL,
-  key: string | undefined = DEFAULT_SUPABASE_KEY
-): SupabaseClient {
-  ensureEnv(url, key);
-  return createSupabaseClient(url as string, key as string);
+if (!supabasePublishableKey) {
+  throw new Error("Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
 }
 
-export function createSupabaseBrowserClient(): SupabaseClient {
-  return createClient(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_KEY);
-}
+export const supabase = createBrowserClient(
+  supabaseUrl,
+  supabasePublishableKey
+);
 
-// Convenience singleton for modules that import `{ supabase }`.
-export const supabase = createClient();
+
+
+
+
+
+// import { createBrowserClient } from "@supabase/ssr";
+
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+// const supabasePublishableKey =
+//   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+// if (!supabaseUrl) {
+//   throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
+// }
+
+// if (!supabasePublishableKey) {
+//   throw new Error("Missing NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
+// }
+
+// export function createSupabaseBrowserClient() {
+//   return createBrowserClient(
+//     supabaseUrl!,
+//     supabasePublishableKey!
+//   );
+// }

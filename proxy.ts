@@ -16,8 +16,8 @@ export async function proxy(request: NextRequest) {
         },
 
         setAll(cookiesToSet) {
+          // write cookies only to the response (request cookies are read-only)
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
             response.cookies.set(name, value, options);
           });
         },
