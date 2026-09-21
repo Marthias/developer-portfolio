@@ -3,7 +3,10 @@ import { notFound, redirect } from "next/navigation";
 
 import {
   getAdminProjectById,
+  getProjectTechnologies,
 } from "@/lib/data/projects";
+
+import { getTechnologies } from "@/lib/data/technologies";
 
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,9 +50,22 @@ export default async function EditProjectPage({
     notFound();
   }
 
+
+
+
+const projectTechnologies =
+  await getProjectTechnologies(id); // Fetch the technologies associated with the project
+
+const technologies = await getTechnologies();
+
+
+
+
   return (
     <main className="min-h-screen px-6 py-20">
+
       <div className="mx-auto max-w-3xl">
+
         <Link
           href="/admin/dashboard/projects"
           className="text-sm text-gray-500 hover:underline"
@@ -71,7 +87,11 @@ export default async function EditProjectPage({
           </p>
         </div>
 
-        <ProjectEditForm project={project} />
+        <ProjectEditForm
+              project={project}
+              technologies={technologies}
+              projectTechnologies={projectTechnologies}
+        />
       </div>
     </main>
   );

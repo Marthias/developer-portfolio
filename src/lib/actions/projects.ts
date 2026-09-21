@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 
+
+
 type CreateProjectInput = {
   title: string;
   slug: string;
@@ -14,6 +16,12 @@ type CreateProjectInput = {
   status: "planned" | "in_progress" | "completed" | "archived";
   featured: boolean;
 };
+
+type UpdateProjectInput = CreateProjectInput & {
+  technologyIds: string[];
+};
+
+
 
 export async function createProject(input: CreateProjectInput) {
   const supabase = await createClient();
@@ -36,6 +44,8 @@ export async function createProject(input: CreateProjectInput) {
   if (profileError || profile?.role !== "admin") {
     throw new Error("You are not authorized to perform this action.");
   }
+
+
 
   const { data, error } = await supabase
     .from("projects")
@@ -112,12 +122,47 @@ export async function updateProject(
     );
   }
 
+    const { error: deleteTechnologiesError } = await supabase
+    .from("project_technologies")
+    .delete()
+    .eq("project_id", id);
+
+  if (deleteTechnologiesError) {
+    throw new Error(
+      `Failed to clear project technologies: ${deleteTechnologiesError.message}`
+    );
+  }
+
+  if (input.technologyIds.length > 0) {
+    const projectTechnologyRows = input.technologyIds.map(
+      (technologyId) => ({
+        project_id: id,
+        technology_id: technologyId,
+      })
+    );
+
+    const { error: insertTechnologiesError } =
+      await supabase
+        .from("project_technologies")
+        .insert(projectTechnologyRows);
+
+    if (insertTechnologiesError) {
+      throw new Error(
+        `Failed to update project technologies: ${insertTechnologiesError.message}`
+      );
+    }
+  }
+
+
   revalidatePath("/admin/dashboard/projects");
   revalidatePath("/");
   revalidatePath(`/projects/${data.slug}`);
 
   return data;
+
 }
+
+
 
 export async function deleteProject(id: string) {
   const supabase = await createClient();

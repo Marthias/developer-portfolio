@@ -155,3 +155,29 @@ export async function getAdminProjectById(id: string) {
 
   return data;
 }
+
+export async function getProjectTechnologies(projectId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("project_technologies")
+    .select(`
+      technology_id,
+      technologies (
+        id,
+        name,
+        category,
+        icon,
+        website_url
+      )
+    `)
+    .eq("project_id", projectId);
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch project technologies: ${error.message}`
+    );
+  }
+
+  return data;
+}

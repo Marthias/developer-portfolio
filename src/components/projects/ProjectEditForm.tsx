@@ -21,10 +21,31 @@ type ProjectEditFormProps = {
       | "archived";
     featured: boolean;
   };
+
+  technologies: {
+    id: string;
+    name: string;
+    category: string;
+    icon: string | null;
+    website_url: string | null;
+  }[];
+
+  projectTechnologies: {
+    technology_id: string;
+    technologies: {
+      id: string;
+      name: string;
+      category: string;
+      icon: string | null;
+      website_url: string | null;
+    }[];
+  }[];
 };
 
 export default function ProjectEditForm({
   project,
+  technologies,
+  projectTechnologies,
 }: ProjectEditFormProps) {
   const router = useRouter();
 
@@ -42,6 +63,13 @@ export default function ProjectEditForm({
     featured: project.featured,
   });
 
+  const [selectedTechnologyIds, setSelectedTechnologyIds] =
+  useState<string[]>(
+    projectTechnologies.map(
+      (item) => item.technology_id
+    )
+  );
+
   function updateField(
     field: keyof typeof form,
     value: string | boolean
@@ -52,6 +80,18 @@ export default function ProjectEditForm({
     }));
   }
 
+  function toggleTechnology(technologyId: string) {
+  setSelectedTechnologyIds((current) => {
+    if (current.includes(technologyId)) {
+      return current.filter(
+        (id) => id !== technologyId
+      );
+    }
+
+    return [...current, technologyId];
+  });
+}
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -61,7 +101,11 @@ export default function ProjectEditForm({
     setIsSubmitting(true);
 
     try {
-      await updateProject(project.id, form);
+      //await updateProject(project.id, form);
+        await updateProject(project.id, {
+          ...form,
+          technologyIds: selectedTechnologyIds,
+        });
 
       router.push("/admin/dashboard/projects");
       router.refresh();
@@ -251,6 +295,50 @@ export default function ProjectEditForm({
           Featured project
         </span>
       </label>
+
+      <div>
+  <div className="mb-3">
+    <h2 className="text-sm font-medium">
+      Technologies
+    </h2>
+
+    <p className="mt-1 text-sm text-gray-500">
+      Select the technologies used by this project.
+    </p>
+  </div>
+
+  <div className="grid gap-3 sm:grid-cols-2">
+    {technologies.map((technology) => {
+      const isSelected =
+        selectedTechnologyIds.includes(technology.id);
+
+      return (
+        <label
+          key={technology.id}
+          className="flex cursor-pointer items-center gap-3 rounded-lg border p-4"
+        >
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() =>
+              toggleTechnology(technology.id)
+            }
+          />
+
+          <div>
+            <p className="font-medium">
+              {technology.name}
+            </p>
+
+            <p className="text-xs text-gray-500">
+              {technology.category}
+            </p>
+          </div>
+        </label>
+      );
+    })}
+  </div>
+</div>
 
       {errorMessage && (
         <div className="rounded-lg border border-red-300 p-4 text-sm text-red-600">
