@@ -57,3 +57,64 @@ export async function getPublishedBlogPostBySlug(
 
   return data;
 }
+
+export async function getAdminBlogPosts() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select(`
+      id,
+      title,
+      slug,
+      excerpt,
+      content,
+      cover_image_url,
+      status,
+      published_at,
+      created_at,
+      updated_at
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch admin blog posts: ${error.message}`
+    );
+  }
+
+  return data;
+}
+
+export async function getAdminBlogPostById(id: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select(`
+      id,
+      title,
+      slug,
+      excerpt,
+      content,
+      cover_image_url,
+      status,
+      published_at,
+      created_at,
+      updated_at
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return null;
+    }
+
+    throw new Error(
+      `Failed to fetch admin blog post: ${error.message}`
+    );
+  }
+
+  return data;
+}

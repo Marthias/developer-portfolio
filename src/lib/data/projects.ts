@@ -37,8 +37,11 @@ export async function getPublicProjects() {
     `)
     .in("status", ["completed", "in_progress"])
     .order("featured", { ascending: false })
-    .order("created_at", { ascending: false });
-
+    .order("created_at", { ascending: false })
+    .order("display_order", {
+      ascending: true,
+      referencedTable: "project_media",
+});
   if (error) {
     throw new Error(`Failed to fetch projects: ${error.message}`);
   }
@@ -83,7 +86,11 @@ export async function getPublicProjectBySlug(slug: string) {
     `)
     .eq("slug", slug)
     .in("status", ["completed", "in_progress"])
-    .single();
+    .order("display_order", {
+     ascending: true,
+     referencedTable: "project_media",
+})
+.single();
 
   if (error) {
     if (error.code === "PGRST116") {
@@ -176,6 +183,33 @@ export async function getProjectTechnologies(projectId: string) {
   if (error) {
     throw new Error(
       `Failed to fetch project technologies: ${error.message}`
+    );
+  }
+
+  return data;
+}
+
+export async function getProjectMedia(projectId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("project_media")
+    .select(`
+      id,
+      project_id,
+      media_type,
+      url,
+      alt_text,
+      display_order,
+      created_at
+    `)
+    .eq("project_id", projectId)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(
+      `Failed to fetch project media: ${error.message}`
     );
   }
 

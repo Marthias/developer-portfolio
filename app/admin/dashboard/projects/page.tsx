@@ -50,7 +50,7 @@ export default async function AdminProjectsPage() {
           </div>
 
           <Link
-            href="/admin/dashboard/projects/new"
+            href="/admin/dashboard/new"
             className="rounded-lg border px-5 py-3 text-sm font-medium"
           >
             + New Project

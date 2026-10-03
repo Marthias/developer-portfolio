@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import ProjectMediaManager from "@/components/projects/ProjectMediaManager";
 
 import {
   getAdminProjectById,
   getProjectTechnologies,
+  getProjectMedia,
 } from "@/lib/data/projects";
 
 import { getTechnologies } from "@/lib/data/technologies";
@@ -53,9 +55,8 @@ export default async function EditProjectPage({
 
 
 
-const projectTechnologies =
-  await getProjectTechnologies(id); // Fetch the technologies associated with the project
-
+const projectTechnologies = await getProjectTechnologies(id);
+const projectMedia = await getProjectMedia(id);
 const technologies = await getTechnologies();
 
 
@@ -91,7 +92,11 @@ const technologies = await getTechnologies();
               project={project}
               technologies={technologies}
               projectTechnologies={projectTechnologies}
+              projectMedia={projectMedia}
         />
+
+        <ProjectMediaManager projectId={project.id} />
+
       </div>
     </main>
   );

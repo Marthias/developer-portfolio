@@ -1,3 +1,4 @@
+import Link from "next/link";
 type ProjectCardProps = {
 
   project: {
@@ -32,12 +33,12 @@ export default function ProjectCard({
 
       <div className="flex items-start justify-between gap-4">
       <h3 className="text-xl font-semibold">
-       <a
-      href={`/projects/${project.slug}`}
-      className="hover:underline"
-    >
-      {project.title}
-    </a>
+       <Link
+           href={`/projects/${project.slug}`}
+            className="hover:underline"
+         >
+           {project.title}
+        </Link>
   </h3>
 
   {project.featured && (
